@@ -1,99 +1,52 @@
-<html>
-    <head>
-        <title>Google reCaptcha Assignment</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    </head>
-    <body>
-        <div class="container" style="width: 600px">
-   <br />
- <br />
-   <div class="panel panel-default">
-      <div class="panel-heading">Register Form</div>
-    <div class="panel-body">
+<?php
+include 'conn.php';
+if (isset($_POST['submit'])) {
+$username = $_POST['username'];
+$email = $_POST['email'];
+$secretKey = "6Ld5lKcZAAAAALZ-KGXbVKQFwcveH8rdhqdARhMP";
+$responseKey =  $_POST['g-recaptcha-response'];
+$userIp = $_SERVER['REMOTE_ADDR'];
+$url = "https://google.com/recaptcha/api/siteverify?secret='.$secretKey.'&response='$userIp";
+$response = file_get_contents($url);
+$response = json_decode($response);
+if ($response->success) {
+  echo "hurray:u ";
+}
 
-     <form metod="post" id="captcha_form">
-      <div class="form-group">
-       <div class="row">
-        <div class="col-md-6">
-         <label>First Name <span class="text-danger">*</span></label>
-         <input type="text" name="first_name" id="first_name" class="form-control" />
-         <span id="first_name_error" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-         <label>Last Name <span class="text-danger">*</span></label>
-         <input type="text" name="last_name" id="last_name" class="form-control" />
-         <span id="last_name_error" class="text-danger"></span>
-        </div>
-       </div>
-      </div>
-      <div class="form-group">
-       <label>Email Address <span class="text-danger">*</span></label>
-       <input type="text" name="email" id="email" class="form-control" />
-       <span id="email_error" class="text-danger"></span>
-      </div>
-      <div class="form-group">
-       <label>Password <span class="text-danger">*</span></label>
-       <input type="password" name="password" id="password" class="form-control" />
-       <span id="password_error" class="text-danger"></span>
-      </div>
-      <div class="form-group">
-       <div class="g-recaptcha" data-sitekey="6Ldv2bcUAAAAAFeYuQAQWH7I_BVv2_2_vvmn2Fpp"></div>
-       <span id="captcha_error" class="text-danger"></span>
-      </div>
-      <div class="form-group">
-       <input type="submit" name="register" id="register" class="btn btn-info" value="Register" />
-      </div>
-     </form>
+}
+?>
 
+</div>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <script src="https://google.com/recaptcha/api.js" async defer></script>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>8440</title>
+  </head>
+  <body>
+    <div class="container pt-5">
+      <form class="form" action="index.php" method="post">
+      <div class="form-group">
+        <label for="username">Name</label>
+        <input type="text" class="form-control" name="username" id='name' placeholder="Name">
+      </div>
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input type="email" class="form-control" name="email" value="" placeholder="email">
+      </div>
+      <div class="form-group">
+        <label for="username">Phone Number</label>
+        <input type="number" class="form-control" name="number" value="" placeholder="Phone Number">
+      </div>
+      <br>
+      <textarea name="comment" class="form-control" rows="8" cols="80" placeholder="comment"></textarea>
+      <br>
+        <div class="g-recaptcha" data-sitekey="6Ld5lKcZAAAAAHevcECwb_OlymcnZhm6IFtLSCSx">
+        </div>
+        <input type="submit" name="submit" value="signup" class="btn btn-outline-primary" style="float:right;">
+      </form>
     </div>
-   </div>
-  </div>
-    </body>
+  </body>
 </html>
-
-<script>
-$(document).ready(function(){
-
- $('#captcha_form').on('submit', function(event){
-  event.preventDefault();
-  $.ajax({
-   url:"process_data.php",
-   method:"POST",
-   data:$(this).serialize(),
-   dataType:"json",
-   beforeSend:function()
-   {
-    $('#register').attr('disabled','disabled');
-   },
-   success:function(data)
-   {
-    $('#register').attr('disabled', false);
-    if(data.success)
-    {
-     $('#captcha_form')[0].reset();
-     $('#first_name_error').text('');
-     $('#last_name_error').text('');
-     $('#email_error').text('');
-     $('#password_error').text('');
-     $('#captcha_error').text('');
-     grecaptcha.reset();
-     alert('Form Successfully validated');
-    }
-    else
-    {
-     $('#first_name_error').text(data.first_name_error);
-     $('#last_name_error').text(data.last_name_error);
-     $('#email_error').text(data.email_error);
-     $('#password_error').text(data.password_error);
-     $('#captcha_error').text(data.captcha_error);
-    }
-   }
-  })
- });
-
-});
-</script>
